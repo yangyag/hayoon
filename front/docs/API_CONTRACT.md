@@ -3,6 +3,9 @@
 기본 베이스 URL:
 - `${VITE_API_BASE_URL}`
 
+monorepo 백엔드 모듈:
+- `back/` (기본 런타임 `http://localhost:8080`)
+
 ## Health
 - `GET /api/v1/health`
 - 200: `{ "status": "UP", "timestamp": "..." }`

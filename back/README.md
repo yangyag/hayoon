@@ -1,10 +1,6 @@
-# hayoon (Backend)
+# Backend (`back/`)
 
-하윤 한글 학습앱의 Spring Boot 백엔드 저장소입니다.
-
-## Frontend Repository
-- 프론트엔드는 별도 저장소로 이관되었습니다.
-- Repo: `git@github.com:yangyag/hayoon_front.git`
+하윤 한글 학습앱 백엔드 모듈입니다. 이 디렉터리는 `hayoon` monorepo의 일부입니다.
 
 ## 역할
 - REST API 제공
@@ -24,6 +20,7 @@
 
 ## 로컬 실행
 ```bash
+cd back
 ./gradlew clean build
 ./gradlew bootRun
 ```
@@ -31,22 +28,21 @@
 접속:
 - Health: `http://localhost:8080/api/v1/health`
 
-## Docker 실행 (Backend only)
+## 통합 Docker 실행 (권장)
+루트에서 front/back를 함께 기동:
 ```bash
 docker compose up -d --build
 ```
 
-접속:
-- API: `http://localhost:8080/api/v1/health`
-
-중지:
+## 백엔드 단독 Docker 실행
 ```bash
-docker compose down
+cd back
+docker build -t yangyag2/hayoon-backend:local .
+docker run --rm -p 8080:8080 yangyag2/hayoon-backend:local
 ```
 
 ## CORS
 - 기본 허용 Origin:
-- `http://localhost:5173`
-- `http://localhost:8081`
-- 설정 키:
-- `app.cors.allowed-origins`
+  - `http://localhost:5173`
+  - `http://localhost:8081`
+- 설정 키: `app.cors.allowed-origins`
