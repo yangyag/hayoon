@@ -148,6 +148,7 @@
 |---|---|---|---|---|
 | 2026-02-23 | Phase 0~1 일부 | DOING | Spring Boot 초기 생성, 카드 API/테스트 초안 작성 | 구현 중 중단 요청으로 보류 |
 | 2026-02-23 | Phase 2 일부 | DONE | 환영 화면(`/`) 구현, 시작 버튼 및 책장 placeholder(`/library`) 연결 | Docker 실행 단계 진행 예정 |
+| 2026-02-23 | Phase 5~6 일부 | DONE | Gradle 프론트 통합 빌드 태스크, SPA 라우트 포워딩, Docker 멀티 스테이지(Node->JDK->JRE) 적용 | `frontend/` 앱 소스 필요 |
 
 ## 8. 리스크 및 대응
 - Java 25 미설치 환경 리스크

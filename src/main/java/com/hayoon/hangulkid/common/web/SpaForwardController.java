@@ -5,13 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class SpaForwardController {
-	@GetMapping("/")
-	public String forwardToWelcome() {
+	@GetMapping({"/", "/library", "/letters", "/learn", "/learn/**"})
+	public String forwardSpaRoutes() {
 		return "forward:/index.html";
-	}
-
-	@GetMapping("/library")
-	public String forwardToLibrary() {
-		return "forward:/library.html";
 	}
 }

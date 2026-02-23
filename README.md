@@ -3,26 +3,37 @@
 40개월 아이를 위한 한글 학습 웹앱 프로젝트입니다.
 
 ## 현재 구현 범위
-- 환영 화면: `하윤이 환영해~`
-- `시작하기` 버튼 클릭 시 책장 화면(`/library`) 이동
-- 책장 화면에 `가나다 한글` 1권 placeholder 표시
+- SPA 라우트: `/`, `/library`, `/letters`, `/learn/**` (React 진입점 `index.html`로 포워딩)
 - 백엔드 API:
 - `GET /api/v1/cards`
 - `GET /api/v1/cards/{id}`
 - `GET /api/v1/health`
 
-## 로컬 실행
+## 요구 환경
+- Java 25
+- Node.js + npm (로컬 통합 빌드 시)
+- Docker / Docker Compose (컨테이너 실행 시)
+
+## 로컬 실행 (프론트 통합 빌드)
 ```bash
+./gradlew clean build
 ./gradlew bootRun
 ```
 
 접속:
 - `http://localhost:8080/`
 
+사전 생성된 `frontend/dist`를 사용해 npm 단계를 건너뛰려면:
+```bash
+./gradlew bootJar -PskipFrontendNpm=true
+```
+
 ## Docker 실행
 ```bash
 docker compose up -d --build
 ```
+
+Dockerfile은 Node(프론트 빌드) -> JDK(bootJar 빌드) -> JRE(런타임) 멀티 스테이지를 사용합니다.
 
 접속:
 - `http://localhost:8080/`
