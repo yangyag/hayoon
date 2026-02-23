@@ -25,8 +25,9 @@
 - React 화면 구현 완료: 환영 -> 책장 -> 글자선택 -> 학습(인트로/단어카드)
 - localStorage 진도 저장 완료 (`hangulKid.v1.progress`, `hangulKid.v1.settings`)
 - 수동 TTS(`읽어주기`) 완료 + 미지원 브라우저 안내 처리
-- Docker 멀티 스테이지 빌드 및 compose 실행 구성 완료
-- Docker Hub 업로드 완료: `yangyag2/hayoon-hangul-kid` (`latest`, `55e8cea`)
+- 프론트/백엔드 분리 런타임으로 전환:
+- 백엔드 API 전용(Spring Boot), 프론트 정적서빙(Nginx)
+- Docker compose 2서비스(`backend:8080`, `frontend:8081`) 구성 완료
 
 미완료 항목:
 - 즐겨찾기 기능(선택 범위, 차기 단계)
@@ -50,15 +51,15 @@
 - 즐겨찾기(현재 스프린트 범위 제외)
 
 ## 5. 아키텍처 개요
-- Backend (`Spring Boot`)
+- Backend (`Spring Boot`, API 전용)
 - `/api/v1/cards`, `/api/v1/letters`, `/api/v1/health` 제공
-- 정적 카드 데이터(JSON) 로드
-- Frontend (`React`)
+- 정적 카드 데이터(JSON) + 단어 이미지(`/assets/words/**`) 제공
+- Frontend (`React + Vite`, Nginx 정적 서빙)
 - 환영/책장/글자선택/학습 화면 제공
 - localStorage를 상태 저장소로 사용
 - 배포 형태
-- React 빌드 결과물을 Spring 정적 리소스에 포함
-- 컨테이너 1개로 실행
+- 프론트/백엔드 각각 독립 컨테이너
+- 기본 포트: frontend `8081`, backend `8080`
 
 ## 6. 단계별 실행 계획
 ### Phase 0. 기준선 고정
@@ -118,10 +119,10 @@
 
 ### Phase 6. Docker 이미지화
 - [x] `Dockerfile` 작성 (멀티 스테이지 권장)
-- [x] `docker-compose.yml` 작성 (앱 단일 서비스)
-- [x] 이미지 빌드/실행 검증
+- [x] `docker-compose.yml` 작성 (frontend/backend 2서비스)
+- [x] backend/frontend 이미지 빌드/실행 검증
 - [x] 컨테이너 헬스체크(`/api/v1/health`) 반영
-- [x] Docker Hub 업로드 및 pull/run 검증 (`latest`, `55e8cea`)
+- [ ] 분리 이미지 Docker Hub 업로드(`hayoon-frontend`, `hayoon-backend`)
 
 권장 Docker 전략
 - Stage 1: Node 기반 프론트 빌드
@@ -129,8 +130,9 @@
 - Stage 3: JRE 25 슬림 런타임으로 실행
 
 완료 기준 (DoD)
-- `docker build` 성공
-- `docker compose up -d` 후 앱 접속 및 API health 정상
+- backend 이미지 빌드 성공
+- frontend 이미지 빌드 성공
+- `docker compose up -d` 후 frontend 접속/backend API health 정상
 
 ### Phase 7. 마무리/문서화
 - [x] 실행 가이드(로컬/도커) 문서화
@@ -157,7 +159,8 @@
 | 2026-02-23 | Phase 2 개선 | DONE | 글자 학습 진입 시 인트로 글자(예: `가`, `나`) 표시 크기를 확대해 가독성 강화 | 아동용 UI 가이드 반영 |
 | 2026-02-23 | Phase 3~4 | DONE | localStorage 진도 저장/복원(`hangulKid.v1.progress`, `hangulKid.v1.settings`) 및 수동 TTS(`읽어주기`) 적용 | 학습 카드에서 복원/재생 확인 |
 | 2026-02-23 | Phase 6~7 | DONE | Docker 이미지 빌드 및 compose 기동 후 health 체크 검증, README/AGENTS/WORK_PLAN 동기화 | `GET /api/v1/health` 200 확인 |
-| 2026-02-23 | Phase 6 배포 | DONE | Docker Hub `yangyag2/hayoon-hangul-kid`로 `latest`, `55e8cea` 태그 push 완료 | pull/run 경로 문서 반영 |
+| 2026-02-23 | Phase 6 배포 | DONE | Docker Hub `yangyag2/hayoon-hangul-kid`로 `latest`, `55e8cea` 태그 push 완료 | 단일 이미지 레거시 경로 |
+| 2026-02-23 | Phase 6 분리 | DONE | 단일 컨테이너 구조를 frontend(Nginx)+backend(API) 2서비스 런타임으로 전환 | SPA 포워딩/프론트 통합 빌드 제거 |
 
 ## 8. 리스크 및 대응
 - Java 25 미설치 환경 리스크
@@ -170,9 +173,10 @@
 ## 9. 최종 검증 체크리스트
 - [x] `./gradlew clean test` 통과
 - [x] `./gradlew clean build` 통과
-- [x] `docker build -t hangul-kid:latest .` 통과
-- [x] `docker compose up -d` 후 웹 접속 가능
-- [x] `docker pull yangyag2/hayoon-hangul-kid:latest` 및 `:55e8cea` 실행 가능
+- [x] `docker build -t hangul-backend:latest .` 통과
+- [x] `docker build -t hangul-frontend:latest ./frontend` 통과
+- [x] `docker compose up -d` 후 frontend(`8081`) 접속 가능
+- [x] `docker compose up -d` 후 backend(`/api/v1/health`) 정상
 - [x] 카드 학습/새로고침 진도 복원 정상
 - [x] `/api/v1/health` 응답 정상
 - [x] 테스트 코드는 백엔드 API(JUnit/MockMvc) 범위만 유지

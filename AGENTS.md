@@ -11,8 +11,8 @@
 - 백엔드: Spring Boot 3.5.11
 - 자바 기준: Java 25 LTS (toolchain)
 - 프론트엔드: React + Vite
-- 배포: Docker 멀티 스테이지 이미지 + docker compose
-- Docker Hub 배포 이미지: `yangyag2/hayoon-hangul-kid` (`latest`, `55e8cea`)
+- 배포: frontend(Nginx) + backend(Spring API) 2서비스 docker compose
+- Docker Hub 배포 대상(분리): `yangyag2/hayoon-frontend`, `yangyag2/hayoon-backend`
 - 저장 방식(현재): 서버 영속 저장 없음, 학습 상태는 프론트 localStorage 사용
 - 테스트 정책: 백엔드 API 호출 테스트만 JUnit(`MockMvc`)으로 작성
 
@@ -32,19 +32,20 @@
 ## 시스템 아키텍처 개요
 ```text
 [Browser]
-  React SPA (react-router)
+  React SPA (Nginx static serving)
     - Welcome / Library / Letters / Learn
-    - /api/v1/* fetch
+    - API calls to backend domain
         |
         v
-[Spring Boot]
+[Spring Boot API]
   - REST API controllers
   - Global exception handling
-  - Static resource serving (SPA bundle + assets)
+  - Static word assets(/assets/words/**)
         |
         v
 [Container Runtime]
-  - Single app container (:8080)
+  - frontend container (:8081)
+  - backend container (:8080)
 ```
 
 ## 런타임 컴포넌트
@@ -78,10 +79,8 @@
 - SPA 정적 리소스 제공
 
 ### SPA 라우트 포워딩
-- 파일: `src/main/java/com/hayoon/hangulkid/common/web/SpaForwardController.java`
-- 포워딩 대상:
-- `/`, `/library`, `/letters`, `/learn`, `/learn/**` -> `forward:/index.html`
-- `/api/**`는 포워딩 대상 아님(백엔드 컨트롤러 처리)
+- 백엔드에서 SPA 포워딩을 사용하지 않는다.
+- SPA 라우트 처리는 frontend(Nginx `try_files`)에서 수행한다.
 
 ## 요청/데이터 흐름
 1. 사용자 진입: `/`
@@ -139,23 +138,22 @@
 ## 빌드/배포 아키텍처
 ### Gradle 통합 빌드
 - 파일: `build.gradle`
-- 파이프라인:
-- `npmInstall` -> `npmBuild` -> `prepareFrontendResources` -> `processResources`
-- 프론트 빌드 산출물(`frontend/dist`)을 Spring `static`으로 포함
-- 옵션:
-- `-PskipFrontendNpm=true` 사용 시 npm 단계 스킵(사전 생성 dist 필요)
+- 역할:
+- backend API 모듈의 `bootJar`/`test`/`build` 수행
+- 프론트 빌드는 `frontend/`에서 npm으로 독립 수행
 
 ### Docker 멀티 스테이지
 - 파일: `Dockerfile`
-- Stage 1: `node:22-bookworm-slim` (frontend build)
-- Stage 2: `eclipse-temurin:25-jdk-jammy` (bootJar build)
-- Stage 3: `eclipse-temurin:25-jre-jammy` (runtime)
-- 런타임 포트: `8080`
+- Stage 1: `eclipse-temurin:25-jdk-jammy` (bootJar build)
+- Stage 2: `eclipse-temurin:25-jre-jammy` (runtime)
+- backend 런타임 포트: `8080`
 
 ### Docker Hub 배포 정책
-- Repository: `yangyag2/hayoon-hangul-kid`
-- 기본 태그: `latest` (최신 안정본)
-- 고정 태그: Git SHA (`55e8cea` 예시)
+- Repositories:
+- `yangyag2/hayoon-frontend`
+- `yangyag2/hayoon-backend`
+- 기본 태그: `latest`
+- 고정 태그: Git SHA
 - 운영/재현성 검증 시 SHA 태그를 우선 사용
 
 ### 실행 명령
@@ -163,9 +161,8 @@
 - 로컬 실행: `./gradlew bootRun`
 - 도커 실행: `docker compose up -d --build`
 - 도커 중지: `docker compose down`
-- Docker Hub pull: `docker pull yangyag2/hayoon-hangul-kid:latest`
-- Docker Hub 실행: `docker run --rm -p 8080:8080 yangyag2/hayoon-hangul-kid:latest`
-- 고정 태그 실행: `docker run --rm -p 8080:8080 yangyag2/hayoon-hangul-kid:55e8cea`
+- frontend 로컬 실행: `cd frontend && npm install && npm run dev`
+- backend health: `curl http://localhost:8080/api/v1/health`
 
 ## 테스트 아키텍처
 - 원칙: 백엔드 API JUnit(`MockMvc`)만 테스트 코드로 관리

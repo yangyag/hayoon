@@ -1,12 +1,3 @@
-FROM node:22-bookworm-slim AS frontend-builder
-WORKDIR /workspace/frontend
-
-COPY frontend/package*.json ./
-RUN npm install
-
-COPY frontend/ ./
-RUN npm run build
-
 FROM eclipse-temurin:25-jdk-jammy AS backend-builder
 WORKDIR /workspace
 
@@ -15,9 +6,8 @@ COPY gradlew build.gradle settings.gradle ./
 RUN chmod +x gradlew
 
 COPY src src
-COPY --from=frontend-builder /workspace/frontend/dist ./frontend/dist
 
-RUN ./gradlew clean bootJar -PskipFrontendNpm=true --no-daemon
+RUN ./gradlew clean bootJar --no-daemon
 
 FROM eclipse-temurin:25-jre-jammy
 WORKDIR /app

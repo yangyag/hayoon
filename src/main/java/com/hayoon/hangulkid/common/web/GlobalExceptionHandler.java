@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -32,6 +33,14 @@ public class GlobalExceptionHandler {
 		HttpServletRequest request
 	) {
 		return buildResponse(HttpStatus.BAD_REQUEST, "INVALID_REQUEST", exception.getMessage(), request);
+	}
+
+	@ExceptionHandler(NoResourceFoundException.class)
+	public org.springframework.http.ResponseEntity<ErrorResponse> handleNotFound(
+		NoResourceFoundException exception,
+		HttpServletRequest request
+	) {
+		return buildResponse(HttpStatus.NOT_FOUND, "NOT_FOUND", exception.getMessage(), request);
 	}
 
 	@ExceptionHandler(Exception.class)

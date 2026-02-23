@@ -2,8 +2,13 @@
 
 40개월 아이를 위한 한글 학습 웹앱 프로젝트입니다.
 
+## 아키텍처
+- `frontend/`: React + Vite (Nginx 정적 서빙)
+- `backend`(root): Spring Boot API
+- 분리 런타임: 프론트(`:8081`), 백엔드 API(`:8080`)
+
 ## 현재 구현 범위
-- SPA 라우트: `/`, `/library`, `/letters`, `/learn/**` (React 진입점 `index.html`로 포워딩)
+- SPA 라우트: `/`, `/library`, `/letters`, `/learn/**`
 - 학습 플로우: `가~하` 전체 글자 선택 및 학습 가능
 - 학습 카드: 같은 순회 내 단어 중복 없이 랜덤 노출, 순회 종료 후 재셔플
 - 학습 상태 저장(localStorage):
@@ -19,57 +24,45 @@
 
 ## 요구 환경
 - Java 25
-- Node.js + npm (로컬 통합 빌드 시)
+- Node.js + npm (프론트 로컬 실행 시)
 - Docker / Docker Compose (컨테이너 실행 시)
 
-## 로컬 실행 (프론트 통합 빌드)
+## 로컬 실행 (분리 개발)
+백엔드:
 ```bash
-./gradlew clean build
 ./gradlew bootRun
 ```
 
-접속:
-- `http://localhost:8080/`
-
-사전 생성된 `frontend/dist`를 사용해 npm 단계를 건너뛰려면:
+프론트:
 ```bash
-./gradlew bootJar -PskipFrontendNpm=true
+cd frontend
+npm install
+npm run dev
 ```
 
-## Docker 실행
+접속:
+- 프론트: `http://localhost:5173`
+- 백엔드 API: `http://localhost:8080/api/v1/health`
+
+## Docker 실행 (분리 런타임)
 ```bash
 docker compose up -d --build
 ```
 
-Dockerfile은 Node(프론트 빌드) -> JDK(bootJar 빌드) -> JRE(런타임) 멀티 스테이지를 사용합니다.
+구성:
+- `backend` 컨테이너: Spring Boot API (`8080`)
+- `frontend` 컨테이너: Nginx + React 정적 파일 (`8081`)
 
 접속:
-- `http://localhost:8080/`
+- 프론트: `http://localhost:8081/`
+- 백엔드 API: `http://localhost:8080/api/v1/health`
 
 중지:
 ```bash
 docker compose down
 ```
 
-## Docker Hub 이미지 실행
-Docker Hub에 배포된 이미지를 바로 실행할 수 있습니다.
-
-- Repository: `yangyag2/hayoon-hangul-kid`
-- 기본 태그: `latest`
-- 고정 배포 태그(재현성): `55e8cea`
-
-빠른 실행(`latest`):
-```bash
-docker pull yangyag2/hayoon-hangul-kid:latest
-docker run --rm -d --name hangul-kid-hub -p 8080:8080 yangyag2/hayoon-hangul-kid:latest
-curl -s http://localhost:8080/api/v1/health
-docker stop hangul-kid-hub
-```
-
-고정 태그 실행(`55e8cea`):
-```bash
-docker pull yangyag2/hayoon-hangul-kid:55e8cea
-docker run --rm -d --name hangul-kid-hub -p 8080:8080 yangyag2/hayoon-hangul-kid:55e8cea
-curl -s http://localhost:8080/api/v1/health
-docker stop hangul-kid-hub
-```
+## 환경 변수
+- 프론트 빌드 시 API base URL:
+- `VITE_API_BASE_URL` (기본값: `http://localhost:8080`)
+- 예시: `frontend/.env.example`
