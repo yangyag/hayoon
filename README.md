@@ -50,3 +50,26 @@ Dockerfile은 Node(프론트 빌드) -> JDK(bootJar 빌드) -> JRE(런타임) �
 ```bash
 docker compose down
 ```
+
+## Docker Hub 이미지 실행
+Docker Hub에 배포된 이미지를 바로 실행할 수 있습니다.
+
+- Repository: `yangyag2/hayoon-hangul-kid`
+- 기본 태그: `latest`
+- 고정 배포 태그(재현성): `55e8cea`
+
+빠른 실행(`latest`):
+```bash
+docker pull yangyag2/hayoon-hangul-kid:latest
+docker run --rm -d --name hangul-kid-hub -p 8080:8080 yangyag2/hayoon-hangul-kid:latest
+curl -s http://localhost:8080/api/v1/health
+docker stop hangul-kid-hub
+```
+
+고정 태그 실행(`55e8cea`):
+```bash
+docker pull yangyag2/hayoon-hangul-kid:55e8cea
+docker run --rm -d --name hangul-kid-hub -p 8080:8080 yangyag2/hayoon-hangul-kid:55e8cea
+curl -s http://localhost:8080/api/v1/health
+docker stop hangul-kid-hub
+```

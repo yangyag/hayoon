@@ -26,6 +26,7 @@
 - localStorage 진도 저장 완료 (`hangulKid.v1.progress`, `hangulKid.v1.settings`)
 - 수동 TTS(`읽어주기`) 완료 + 미지원 브라우저 안내 처리
 - Docker 멀티 스테이지 빌드 및 compose 실행 구성 완료
+- Docker Hub 업로드 완료: `yangyag2/hayoon-hangul-kid` (`latest`, `55e8cea`)
 
 미완료 항목:
 - 즐겨찾기 기능(선택 범위, 차기 단계)
@@ -120,6 +121,7 @@
 - [x] `docker-compose.yml` 작성 (앱 단일 서비스)
 - [x] 이미지 빌드/실행 검증
 - [x] 컨테이너 헬스체크(`/api/v1/health`) 반영
+- [x] Docker Hub 업로드 및 pull/run 검증 (`latest`, `55e8cea`)
 
 권장 Docker 전략
 - Stage 1: Node 기반 프론트 빌드
@@ -155,6 +157,7 @@
 | 2026-02-23 | Phase 2 개선 | DONE | 글자 학습 진입 시 인트로 글자(예: `가`, `나`) 표시 크기를 확대해 가독성 강화 | 아동용 UI 가이드 반영 |
 | 2026-02-23 | Phase 3~4 | DONE | localStorage 진도 저장/복원(`hangulKid.v1.progress`, `hangulKid.v1.settings`) 및 수동 TTS(`읽어주기`) 적용 | 학습 카드에서 복원/재생 확인 |
 | 2026-02-23 | Phase 6~7 | DONE | Docker 이미지 빌드 및 compose 기동 후 health 체크 검증, README/AGENTS/WORK_PLAN 동기화 | `GET /api/v1/health` 200 확인 |
+| 2026-02-23 | Phase 6 배포 | DONE | Docker Hub `yangyag2/hayoon-hangul-kid`로 `latest`, `55e8cea` 태그 push 완료 | pull/run 경로 문서 반영 |
 
 ## 8. 리스크 및 대응
 - Java 25 미설치 환경 리스크
@@ -169,6 +172,7 @@
 - [x] `./gradlew clean build` 통과
 - [x] `docker build -t hangul-kid:latest .` 통과
 - [x] `docker compose up -d` 후 웹 접속 가능
+- [x] `docker pull yangyag2/hayoon-hangul-kid:latest` 및 `:55e8cea` 실행 가능
 - [x] 카드 학습/새로고침 진도 복원 정상
 - [x] `/api/v1/health` 응답 정상
 - [x] 테스트 코드는 백엔드 API(JUnit/MockMvc) 범위만 유지

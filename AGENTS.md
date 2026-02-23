@@ -12,6 +12,7 @@
 - 자바 기준: Java 25 LTS (toolchain)
 - 프론트엔드: React + Vite
 - 배포: Docker 멀티 스테이지 이미지 + docker compose
+- Docker Hub 배포 이미지: `yangyag2/hayoon-hangul-kid` (`latest`, `55e8cea`)
 - 저장 방식(현재): 서버 영속 저장 없음, 학습 상태는 프론트 localStorage 사용
 - 테스트 정책: 백엔드 API 호출 테스트만 JUnit(`MockMvc`)으로 작성
 
@@ -151,11 +152,20 @@
 - Stage 3: `eclipse-temurin:25-jre-jammy` (runtime)
 - 런타임 포트: `8080`
 
+### Docker Hub 배포 정책
+- Repository: `yangyag2/hayoon-hangul-kid`
+- 기본 태그: `latest` (최신 안정본)
+- 고정 태그: Git SHA (`55e8cea` 예시)
+- 운영/재현성 검증 시 SHA 태그를 우선 사용
+
 ### 실행 명령
 - 로컬 빌드: `./gradlew clean build`
 - 로컬 실행: `./gradlew bootRun`
 - 도커 실행: `docker compose up -d --build`
 - 도커 중지: `docker compose down`
+- Docker Hub pull: `docker pull yangyag2/hayoon-hangul-kid:latest`
+- Docker Hub 실행: `docker run --rm -p 8080:8080 yangyag2/hayoon-hangul-kid:latest`
+- 고정 태그 실행: `docker run --rm -p 8080:8080 yangyag2/hayoon-hangul-kid:55e8cea`
 
 ## 테스트 아키텍처
 - 원칙: 백엔드 API JUnit(`MockMvc`)만 테스트 코드로 관리
