@@ -337,7 +337,7 @@ body {
 
 .intro-letter {
   margin: 10px 0;
-  font-size: clamp(6rem, 36vw, 9rem);
+  font-size: clamp(9rem, 52vw, 13rem);
   line-height: 1;
   color: #203565;
   text-shadow: 0 10px 16px rgba(62, 108, 173, 0.22);
@@ -374,6 +374,33 @@ body {
 
 .word-text strong {
   color: #f14662;
+}
+
+.word-actions {
+  margin: 14px 0 0;
+}
+
+.btn.tts-btn {
+  min-height: 48px;
+  padding: 10px 18px;
+  font-size: 1.05rem;
+}
+
+.tts-status {
+  margin: 8px 0 0;
+  color: #4f638f;
+  font-size: 1rem;
+}
+
+.tts-status.warning {
+  color: #cb4f4f;
+}
+
+.progress-text {
+  margin: 10px 0 0;
+  font-size: 1rem;
+  color: #4f638f;
+  font-weight: 700;
 }
 
 @media (min-width: 640px) {
