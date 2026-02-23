@@ -1,0 +1,9 @@
+services:
+  hangul-kid:
+    container_name: hangul-kid
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    restart: unless-stopped

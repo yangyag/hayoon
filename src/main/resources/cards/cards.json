@@ -1,0 +1,170 @@
+[
+  {
+    "id": "card-apple",
+    "word": "사과",
+    "imageUrl": "/images/cards/card-apple.svg",
+    "level": 1,
+    "tags": ["과일", "음식"]
+  },
+  {
+    "id": "card-ball",
+    "word": "공",
+    "imageUrl": "/images/cards/card-ball.svg",
+    "level": 1,
+    "tags": ["놀이", "운동"]
+  },
+  {
+    "id": "card-banana",
+    "word": "바나나",
+    "imageUrl": "/images/cards/card-banana.svg",
+    "level": 1,
+    "tags": ["과일", "음식"]
+  },
+  {
+    "id": "card-car",
+    "word": "자동차",
+    "imageUrl": "/images/cards/card-car.svg",
+    "level": 1,
+    "tags": ["탈것", "생활"]
+  },
+  {
+    "id": "card-cat",
+    "word": "고양이",
+    "imageUrl": "/images/cards/card-cat.svg",
+    "level": 1,
+    "tags": ["동물", "친구"]
+  },
+  {
+    "id": "card-dog",
+    "word": "강아지",
+    "imageUrl": "/images/cards/card-dog.svg",
+    "level": 1,
+    "tags": ["동물", "친구"]
+  },
+  {
+    "id": "card-milk",
+    "word": "우유",
+    "imageUrl": "/images/cards/card-milk.svg",
+    "level": 1,
+    "tags": ["음식", "생활"]
+  },
+  {
+    "id": "card-star",
+    "word": "별",
+    "imageUrl": "/images/cards/card-star.svg",
+    "level": 1,
+    "tags": ["하늘", "자연"]
+  },
+  {
+    "id": "card-bear",
+    "word": "곰",
+    "imageUrl": "/images/cards/card-bear.svg",
+    "level": 2,
+    "tags": ["동물", "숲"]
+  },
+  {
+    "id": "card-fish",
+    "word": "물고기",
+    "imageUrl": "/images/cards/card-fish.svg",
+    "level": 2,
+    "tags": ["동물", "바다"]
+  },
+  {
+    "id": "card-flower",
+    "word": "꽃",
+    "imageUrl": "/images/cards/card-flower.svg",
+    "level": 2,
+    "tags": ["자연", "식물"]
+  },
+  {
+    "id": "card-grape",
+    "word": "포도",
+    "imageUrl": "/images/cards/card-grape.svg",
+    "level": 2,
+    "tags": ["과일", "음식"]
+  },
+  {
+    "id": "card-plane",
+    "word": "비행기",
+    "imageUrl": "/images/cards/card-plane.svg",
+    "level": 2,
+    "tags": ["탈것", "하늘"]
+  },
+  {
+    "id": "card-rabbit",
+    "word": "토끼",
+    "imageUrl": "/images/cards/card-rabbit.svg",
+    "level": 2,
+    "tags": ["동물", "친구"]
+  },
+  {
+    "id": "card-school",
+    "word": "학교",
+    "imageUrl": "/images/cards/card-school.svg",
+    "level": 2,
+    "tags": ["장소", "생활"]
+  },
+  {
+    "id": "card-train",
+    "word": "기차",
+    "imageUrl": "/images/cards/card-train.svg",
+    "level": 2,
+    "tags": ["탈것", "여행"]
+  },
+  {
+    "id": "card-butterfly",
+    "word": "나비",
+    "imageUrl": "/images/cards/card-butterfly.svg",
+    "level": 3,
+    "tags": ["곤충", "자연"]
+  },
+  {
+    "id": "card-elephant",
+    "word": "코끼리",
+    "imageUrl": "/images/cards/card-elephant.svg",
+    "level": 3,
+    "tags": ["동물", "초원"]
+  },
+  {
+    "id": "card-firefighter",
+    "word": "소방관",
+    "imageUrl": "/images/cards/card-firefighter.svg",
+    "level": 3,
+    "tags": ["직업", "안전"]
+  },
+  {
+    "id": "card-hospital",
+    "word": "병원",
+    "imageUrl": "/images/cards/card-hospital.svg",
+    "level": 3,
+    "tags": ["장소", "건강"]
+  },
+  {
+    "id": "card-library",
+    "word": "도서관",
+    "imageUrl": "/images/cards/card-library.svg",
+    "level": 3,
+    "tags": ["장소", "책"]
+  },
+  {
+    "id": "card-rainbow",
+    "word": "무지개",
+    "imageUrl": "/images/cards/card-rainbow.svg",
+    "level": 3,
+    "tags": ["하늘", "자연"]
+  },
+  {
+    "id": "card-scissors",
+    "word": "가위",
+    "imageUrl": "/images/cards/card-scissors.svg",
+    "level": 3,
+    "tags": ["도구", "놀이"]
+  },
+  {
+    "id": "card-strawberry",
+    "word": "딸기",
+    "imageUrl": "/images/cards/card-strawberry.svg",
+    "level": 3,
+    "tags": ["과일", "음식"]
+  }
+]
