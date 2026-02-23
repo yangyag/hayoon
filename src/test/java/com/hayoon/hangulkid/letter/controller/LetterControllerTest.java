@@ -37,25 +37,29 @@ class LetterControllerTest {
 			response
 				.andExpect(jsonPath("$.items[" + index + "].key").value(KEYS[index]))
 				.andExpect(jsonPath("$.items[" + index + "].label").value(LABELS[index]))
-				.andExpect(jsonPath("$.items[" + index + "].enabled").value(index == 0));
+				.andExpect(jsonPath("$.items[" + index + "].enabled").value(true));
 		}
 	}
 
 	@Test
-	void getWordsShouldReturnGaWordsWhenGaEnabled() throws Exception {
-		mockMvc.perform(get("/api/v1/letters/ga/words"))
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.key").value("ga"))
-			.andExpect(jsonPath("$.label").value("가"))
-			.andExpect(jsonPath("$.items.length()").value(5))
-			.andExpect(jsonPath("$.items[*].imageUrl", everyItem(startsWith("/assets/words/ga/"))));
+	void getWordsShouldReturnAllEnabledLetterWords() throws Exception {
+		for (int index = 0; index < KEYS.length; index++) {
+			String key = KEYS[index];
+			String label = LABELS[index];
+			mockMvc.perform(get("/api/v1/letters/{key}/words", key))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.key").value(key))
+				.andExpect(jsonPath("$.label").value(label))
+				.andExpect(jsonPath("$.items.length()").value(5))
+				.andExpect(jsonPath("$.items[*].imageUrl", everyItem(startsWith("/assets/words/" + key + "/"))));
+		}
 	}
 
 	@Test
-	void getWordsShouldReturnNotFoundWhenLetterDisabled() throws Exception {
-		mockMvc.perform(get("/api/v1/letters/na/words"))
+	void getWordsShouldReturnNotFoundWhenKeyUnknown() throws Exception {
+		mockMvc.perform(get("/api/v1/letters/unknown/words"))
 			.andExpect(status().isNotFound())
 			.andExpect(jsonPath("$.code").value("CARD_NOT_FOUND"))
-			.andExpect(jsonPath("$.path").value("/api/v1/letters/na/words"));
+			.andExpect(jsonPath("$.path").value("/api/v1/letters/unknown/words"));
 	}
 }

@@ -4,6 +4,7 @@
 
 ## 현재 구현 범위
 - SPA 라우트: `/`, `/library`, `/letters`, `/learn/**` (React 진입점 `index.html`로 포워딩)
+- 학습 플로우: `가~하` 전체 글자 선택 및 학습 가능
 - 백엔드 API:
 - `GET /api/v1/cards`
 - `GET /api/v1/cards/{id}`
