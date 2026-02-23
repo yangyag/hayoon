@@ -5,9 +5,16 @@
 ## 현재 구현 범위
 - SPA 라우트: `/`, `/library`, `/letters`, `/learn/**` (React 진입점 `index.html`로 포워딩)
 - 학습 플로우: `가~하` 전체 글자 선택 및 학습 가능
+- 학습 카드: 같은 순회 내 단어 중복 없이 랜덤 노출, 순회 종료 후 재셔플
+- 학습 상태 저장(localStorage):
+- `hangulKid.v1.progress`: 글자별 `lastWordId`, `seenCount`, 마지막 진입 글자
+- `hangulKid.v1.settings`: TTS 지원 여부
+- 읽어주기(TTS): 학습 카드에서 `읽어주기` 버튼으로 수동 재생
 - 백엔드 API:
 - `GET /api/v1/cards`
 - `GET /api/v1/cards/{id}`
+- `GET /api/v1/letters`
+- `GET /api/v1/letters/{key}/words`
 - `GET /api/v1/health`
 
 ## 요구 환경
