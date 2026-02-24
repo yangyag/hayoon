@@ -167,6 +167,15 @@ function LearnPage() {
     setTtsNotice("");
   }
 
+  function handleSpeakLetter() {
+    const ok = speakWord(letterLabel);
+    if (!ok) {
+      setTtsNotice("읽어주기를 사용할 수 없어요.");
+      return;
+    }
+    setTtsNotice("");
+  }
+
   function renderWord(word) {
     if (!word) {
       return null;
@@ -200,7 +209,14 @@ function LearnPage() {
         {!loading && !error && showIntro ? (
           <article className="intro-card">
             <p className="intro-label">오늘의 글자</p>
-            <div className="intro-letter">{letterLabel}</div>
+            <button
+              type="button"
+              className="intro-letter intro-letter-btn"
+              onClick={handleSpeakLetter}
+              aria-label={`${letterLabel} 발음 듣기`}
+            >
+              {letterLabel}
+            </button>
             <p className="section-subtitle">버튼을 눌러 단어 놀이를 시작해요.</p>
           </article>
         ) : null}
@@ -229,10 +245,6 @@ function LearnPage() {
                 읽어주기
               </button>
             </div>
-            {!ttsSupported ? (
-              <p className="tts-status warning">이 브라우저는 읽어주기를 지원하지 않아요.</p>
-            ) : null}
-            {ttsNotice ? <p className="tts-status warning">{ttsNotice}</p> : null}
             <p className="progress-text">
               {cycle.seenCount} / {words.length}
             </p>
@@ -242,6 +254,10 @@ function LearnPage() {
         {!loading && !error && words.length === 0 ? (
           <p className="status-text warning">아직 단어가 없어요.</p>
         ) : null}
+        {!loading && !error && !ttsSupported ? (
+          <p className="tts-status warning">이 브라우저는 읽어주기를 지원하지 않아요.</p>
+        ) : null}
+        {!loading && !error && ttsNotice ? <p className="tts-status warning">{ttsNotice}</p> : null}
 
         <button
           type="button"

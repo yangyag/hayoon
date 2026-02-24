@@ -343,6 +343,23 @@ body {
   text-shadow: 0 10px 16px rgba(62, 108, 173, 0.22);
 }
 
+.intro-letter-btn {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.intro-letter-btn:hover {
+  filter: brightness(1.04);
+}
+
+.intro-letter-btn:focus-visible {
+  outline: 4px solid #ff8d5d;
+  outline-offset: 8px;
+  border-radius: 18px;
+}
+
 .image-frame {
   width: min(320px, 92%);
   aspect-ratio: 1 / 1;

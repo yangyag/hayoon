@@ -36,9 +36,9 @@ docker compose up -d --build
 
 ## 백엔드 단독 Docker 실행
 ```bash
-cd back
-docker build -t yangyag2/hayoon-backend:local .
-docker run --rm -p 8080:8080 yangyag2/hayoon-backend:local
+docker run --rm --name hayoon-back --network hayoon-net -p 8080:8080 \
+  -e APP_CORS_ALLOWED_ORIGINS="http://localhost:8081,http://localhost:5173" \
+  yangyag2/hayoon-backend:latest
 ```
 
 ## CORS
