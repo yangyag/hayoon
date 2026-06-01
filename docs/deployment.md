@@ -19,7 +19,7 @@
 | Frontend | React + Vite, Nginx 1.27-alpine 정적 서빙 | `hayoon-front` | `80` | `8081` |
 | Backend | Spring Boot API (Java/Temurin 25) | `hayoon-back` | `8080` | `8080` |
 
-프론트 Nginx가 일부 경로를 백엔드 컨테이너로 리버스 프록시하므로, **두 컨테이너는 반드시 동일한 Docker 네트워크(`hayoon-net`)에 있어야** 합니다.
+프론트 Nginx가 일부 경로를 백엔드 컨테이너로 리버스 프록시하므로, **두 컨테이너는 반드시 동일한 Docker 네트워크에 있어야** 합니다. 로컬 `docker compose` 실행 시에는 Docker Compose가 자동으로 기본 네트워크를 생성하여 두 컨테이너를 연결합니다. EC2에서 `docker run`으로 직접 실행할 경우에는 `hayoon-net`을 수동으로 생성해야 합니다.
 
 ---
 
@@ -49,6 +49,7 @@
   - 빌드 인자 `VITE_API_BASE_URL`(기본값 빈 값)을 환경변수로 주입하여 빌드.
   - 런타임 스테이지: `nginx:1.27-alpine`, `nginx.conf`를 `/etc/nginx/conf.d/default.conf`로, 빌드 산출물 `dist`를 `/usr/share/nginx/html`로 복사.
 - `EXPOSE 80`
+- 실행: `CMD ["nginx", "-g", "daemon off;"]`
 
 ### 프론트 단독 Build & Push (`front/docs/DEPLOY.md`)
 ```bash
@@ -112,6 +113,7 @@ docker compose up -d --build
 `docker-compose.yml` 핵심:
 - `back`: `./back` 빌드, `APP_CORS_ALLOWED_ORIGINS` 환경변수 주입, 포트 `8080:8080`, `restart: unless-stopped`
 - `front`: `./front` 빌드(build arg `VITE_API_BASE_URL`), 포트 `8081:80`, `depends_on: back`, `restart: unless-stopped`
+- 네트워크: Docker Compose가 자동으로 기본 네트워크를 생성하여 `back`과 `front` 컨테이너를 연결합니다. `hayoon-net`을 별도로 생성할 필요 없습니다.
 
 접속:
 - Frontend: `http://localhost:8081`
@@ -151,13 +153,13 @@ docker run -d --name hayoon-front --restart unless-stopped \
 
 필수 확인 사항:
 - `APP_CORS_ALLOWED_ORIGINS`의 `43.202.113.123`을 실제 EC2 퍼블릭 IP(또는 도메인)로 변경.
-- `hayoon-front`, `hayoon-back`이 같은 Docker 네트워크(`hayoon-net`)에 있어야 함.
+- `hayoon-front`, `hayoon-back`이 같은 Docker 네트워크(`hayoon-net`)에 있어야 함. EC2 `docker run` 방식에서는 `hayoon-net`을 위와 같이 수동으로 생성해야 합니다.
 - AWS 보안그룹에서 `8081` 인바운드 오픈. 백엔드 외부 직접 접근이 불필요하면 `8080`은 닫아도 됨(프론트 Nginx가 내부 네트워크로 프록시하므로).
 
 빠른 검증:
 ```bash
 docker ps
-curl http://localhost:8080/api/v1/health
+curl http://localhost:8080/api/v1/health  # 8080을 보안그룹에서 닫은 경우 EC2 내부에서 localhost로만 접근 가능
 ```
 
 접속:
@@ -175,7 +177,7 @@ docker run --rm --name hayoon-front --network hayoon-net -p 8081:80 \
 ## 9. 검증 명령 (`README.md`)
 ```bash
 cd back && ./gradlew clean test
-cd front && npm run build
+cd front && npm run build  # 프론트엔드는 별도 테스트 스크립트가 없으므로 빌드 성공으로 검증
 ```
 
 개별 개발 실행:

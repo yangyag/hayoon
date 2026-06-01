@@ -43,7 +43,7 @@
 
 ### 4.1 WelcomePage (`front/src/pages/WelcomePage.jsx`)
 
-- 환영 문구("하윤이 환영해~")와 배경 장식 오브(`bg-orb`) 표시
+- 환영 문구("하윤이 환영해~")와 배경 장식 bg-orb 3개(orb-a, orb-b, orb-c) 표시
 - "시작하기" 버튼 클릭 시 `navigate("/library")`
 
 ### 4.2 LibraryPage (`front/src/pages/LibraryPage.jsx`)
@@ -62,7 +62,7 @@
   - 실패 시 `error`에 "글자 목록을 불러오지 못했어요." 설정하고 모든 글자를 `enabled: false`로 복원
   - `active` 플래그로 언마운트 후 setState 방지(cleanup에서 `active = false`)
 - 글자 버튼 클릭(`handleLetterClick`)
-  - `letter.enabled === true`면 `navigate('/learn/${letter.key}')`로 이동
+  - `letter.enabled === true`면 `` navigate(`/learn/${letter.key}`) ``로 이동
   - 비활성(잠금)이면 `showSoonMessage()`로 "곧 열려요" 안내를 1400ms 동안 표시(`noticeTimeoutRef`로 타이머 관리, cleanup 시 `clearTimeout`)
 - 버튼 클래스는 `enabled`/`locked`로 분기, `aria-disabled={!letter.enabled}`
 - 상단에 "뒤로"(→ `/library`), "홈"(→ `/`) 버튼
@@ -87,6 +87,7 @@
 
 - 마운트 시: `isTtsSupported()` 결과를 `ttsSupported` 상태와 `saveTtsSupport()`로 저장. 언마운트 시 `stopSpeaking()`
 - `letterKey` 변경 시: `readLetterProgress(letterKey)`로 저장된 진행도 읽고 `saveLastLetterKey(letterKey)` 기록 후 `getLetterWords(letterKey)` 호출
+  - 로딩 중 '학습 카드를 준비하는 중...' 메시지 표시
   - 성공: `setWords(items)` + `buildInitialCycle`로 사이클 초기화
   - 실패: `words=[]`, `error="단어를 불러오지 못했어요."`
 - `cycle.current?.id` 변경 시 `imageFailed`를 `false`로 리셋
@@ -115,11 +116,11 @@
 ## 6. API 연동 (`front/src/api.js`)
 
 - `API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/+$/, "")` — 환경변수 `VITE_API_BASE_URL`로 베이스 URL 설정, 끝의 슬래시 제거. 미설정 시 빈 문자열(상대경로 사용 → Vite 프록시/같은 호스트)
-- `withApiBase(path)`: 베이스가 있고 `path`가 절대 URL이 아니면 앞에 베이스 붙임
+- `withApiBase(path)`: 베이스가 있고 `path`가 http/https로 시작하지 않으면 앞에 베이스 붙임
 - `fetchJson(url)`: `fetch(withApiBase(url), { headers: { Accept: "application/json" } })`. `response.ok`가 아니면 `Request failed: <status>` 에러 throw, 아니면 `response.json()`
 - `readArray(payload, candidates)`: payload가 배열이면 그대로, 아니면 후보 키들 중 첫 배열을 반환(없으면 `[]`)
 - `normalizeEnabledFlag(item)`: `enabled`/`open`/`active`(boolean) 또는 `status`(문자열 `enabled`/`open`/`active`)로 활성 여부 판정. 모두 없으면 기본 `true`
-- `resolveImageUrl(imageUrl)`: 절대 URL이면 그대로, `/`로 시작하면 `withApiBase`로 절대화, 그 외엔 원본 그대로(빈 값은 `""`)
+- `resolveImageUrl(imageUrl)`: 절대 URL이면 그대로, `/`로 시작하면 `withApiBase`로 절대화, 그 외엔 trim() 처리된 값 반환(빈 값은 `""`)
 
 ### 엔드포인트
 
@@ -135,7 +136,7 @@
 #### `getLetterWords(letterKey)` — `GET /api/v1/letters/{letterKey}/words`
 
 - `letterKey`는 `encodeURIComponent`로 인코딩
-- 응답 배열을 `["items", "words"]` 키로 추출
+- 응답 배열을 `readArray(payload, ["items", "words"])`로 추출
 - 각 항목을 `{ id, word, imageUrl }`로 정규화
   - `id`: `id` 없으면 `${letterKey}-${index}`
   - `word`: `word | label`
@@ -161,8 +162,8 @@
 `localStorage` 기반. 키와 스키마 버전이 고정되어 있다.
 
 - 저장 키
-  - 진행도: `hangulKid.v1.progress`
-  - 설정: `hangulKid.v1.settings`
+  - 진행도: `hangulKid.v1.progress` (localStorage 키: `"hangulKid.v1.progress"`)
+  - 설정: `hangulKid.v1.settings` (localStorage 키: `"hangulKid.v1.settings"`)
   - `SCHEMA_VERSION = 1`
 - 가드/방어 로직
   - `isStorageAvailable()`로 `window.localStorage` 존재 확인
@@ -187,7 +188,7 @@
 { version: 1, ttsSupported: null | boolean }
 ```
 
-- `readSettingsState()` / `writeSettingsState(settings)`
+- `readSettingsState()` / `writeSettingsState(settings)`: 전체 설정 읽기/쓰기(정규화 포함)
 - `saveTtsSupport(ttsSupported)`: `ttsSupported`를 boolean으로 저장(LearnPage 마운트 시 호출)
 
 ## 9. 셔플 유틸 (`front/src/utils/shuffle.js`)

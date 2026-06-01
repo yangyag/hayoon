@@ -29,6 +29,8 @@
 
 - 빌드/개발: `front/vite.config.js` — 개발 서버 포트 `5173`, `/api` 요청을 `http://localhost:8080`(백엔드)으로 프록시한다. 그 외 루트 파일: `index.html`, `Dockerfile`, `nginx.conf`, `package.json`, `dist/`(빌드 산출물), `docs/`.
 
+> **Docker 네트워크 참고:** `docker-compose.yml`에는 별도 네트워크를 지정하지 않으므로, Docker Compose가 자동으로 기본 네트워크(예: `hayoon_default`)를 생성하여 `hayoon-back`과 `hayoon-front` 컨테이너를 같은 네트워크에 둔다. `hayoon-net`이라는 이름의 네트워크는 EC2에서 `docker run` 방식으로 수동 배포할 때만 별도로 생성하는 것으로, Docker Compose 배포와는 무관하다.
+
 ### 2.2 페이지 (`front/src/pages/`)
 
 - `WelcomePage.jsx`: 정적 화면. "시작하기" 클릭 시 `navigate("/library")`.
@@ -67,7 +69,7 @@
 
 Spring Boot 애플리케이션. 기본 패키지 `com.hayoon.hangulkid`, 진입점 `HangulKidApplication`(`@SpringBootApplication`). 설정 `application.properties`에 앱 이름 `hangul-kid`, CORS 허용 오리진 기본값 `http://localhost:5173,http://localhost:8081`.
 
-패키지는 도메인별로 `card`, `letter`, `common` 세 갈래로 나뉘며, 각 도메인은 `controller / service / repository / model / dto` 계층을 따른다.
+패키지는 도메인별로 `card`, `letter`, `common` 세 갈래로 나뉜다. 계층 구성은 도메인마다 다르다: `card`는 `controller / service / repository / model / dto` 전 계층을 갖추고, `letter`는 별도 repository 없이 `controller / service / model / dto` 계층만 존재한다(`LetterService` 내 정적 목록으로 하드코딩).
 
 ### 3.1 letter 패키지 (학습 글자/단어)
 

@@ -15,6 +15,13 @@
 | 공통 경로 프리픽스 | `/api/v1` |
 | 응답 형식 | JSON |
 
+도커 환경에서의 API 접근 경로:
+
+| 환경 | 베이스 URL |
+| --- | --- |
+| 프론트 컨테이너 내부 | `http://back:8080` |
+| 호스트 직접 테스트 | `http://localhost:8080` |
+
 `front/docs/API_CONTRACT.md` 의 프론트엔드 관점 계약과 일치하며, 본 문서는 백엔드 구현 기준의 상세 명세입니다.
 
 ## CORS 설정
@@ -82,7 +89,7 @@
 | 필드 | 타입 | 설명 |
 | --- | --- | --- |
 | `items` | array of `CardDto` | 카드 목록 |
-| `total` | int | 총 개수 |
+| `total` | int | level 필터 적용 후 limit 이전의 전체 결과 개수 |
 
 `CardDto` 구조:
 
@@ -182,6 +189,8 @@
 | `word` | string | 단어 |
 | `imageUrl` | string | 이미지 URL |
 
+존재하지 않거나 비활성화된 key 요청 시 404 `CARD_NOT_FOUND` 반환.
+
 예시 (200):
 
 ```json
@@ -213,12 +222,12 @@
 
 | HTTP 상태 | code | 트리거 예외 | 설명 |
 | --- | --- | --- | --- |
-| 404 Not Found | `CARD_NOT_FOUND` | `CardNotFoundException` | 카드(또는 글자 단어) 미존재. 메시지: `"Card not found: {id}"` |
+| 404 Not Found | `CARD_NOT_FOUND` | `CardNotFoundException` | 카드(또는 글자 단어) 미존재. 메시지: `"Card not found: {id_or_key}"` (카드 ID 조회 시 카드 ID, 글자 key 조회 시 글자 key가 포함됨) |
 | 400 Bad Request | `INVALID_REQUEST` | `ConstraintViolationException`, `MethodArgumentNotValidException`, `MethodArgumentTypeMismatchException`, `HttpMessageNotReadableException` | 파라미터 검증 실패 / 타입 불일치 / 본문 파싱 실패 (예: `level`, `limit` 범위 초과) |
 | 404 Not Found | `NOT_FOUND` | `NoResourceFoundException` | 매핑되지 않은 리소스 경로 |
 | 500 Internal Server Error | `INTERNAL_ERROR` | 그 외 모든 `Exception` | 예기치 못한 서버 오류 |
 
-에러 응답 예시 (404):
+에러 응답 예시 (404, 카드 ID 조회):
 
 ```json
 {
