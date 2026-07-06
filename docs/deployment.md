@@ -130,6 +130,19 @@ docker compose down
 
 ## 8. EC2 배포/이미지 업데이트 절차 (`docker run`, `latest` 단일 운영)
 
+### 8.1 EC2 접속 (SSH)
+
+- 호스트: `43.202.113.123`, 로그인 사용자: `ubuntu`
+- 키페어: 로컬 `~/aws/test-keypair.pem` (EC2 키페어)
+  - 주의: `~/.ssh/id_ed25519` 등 다른 로컬 키는 EC2에 미등록이라 `Permission denied (publickey)`로 거부됨. 반드시 `~/aws/test-keypair.pem` 사용.
+- 접속 명령:
+  ```bash
+  ssh -i ~/aws/test-keypair.pem ubuntu@43.202.113.123
+  ```
+- 공존 서비스 주의: 동일 EC2에서 다른 프로젝트(`llm-back/front`, `house-inventory-back/front`, `auto-postgres`) 컨테이너가 함께 운영 중. 배포 시 `docker rm -f` 대상은 `hayoon-front`/`hayoon-back`만 지정할 것(다른 컨테이너는 건드리지 않음).
+
+### 8.2 이미지 업데이트 절차
+
 `README.md` 기준. 예시 퍼블릭 IP `43.202.113.123`:
 ```bash
 docker network create hayoon-net || true
