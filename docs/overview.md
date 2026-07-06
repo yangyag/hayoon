@@ -1,16 +1,16 @@
 # 하윤(hayoon) 프로젝트 전체 개요
 
 ## 1. 프로젝트 목적
-`hayoon`은 **하윤 한글 학습앱**의 통합 모노레포입니다. 아동을 대상으로 한글 글자(가, 나, 다 …)를 선택해 해당 글자로 시작하는 단어와 이미지를 보고, 브라우저 음성합성(TTS)으로 단어를 들으며 학습하는 웹 애플리케이션입니다. 프론트엔드(React + Vite)와 백엔드(Spring Boot REST API)를 하나의 저장소에서 관리하며, Docker Compose 또는 `docker run`(EC2)으로 통합 배포합니다.
+`hayoon`은 **하윤 한글 학습앱**의 통합 모노레포입니다. 아동을 대상으로 한글 글자(가, 나, 다 …)를 선택해 해당 글자로 시작하는 단어와 이미지를 보고, 브라우저 음성합성(TTS)으로 단어를 들으며 학습하는 웹 애플리케이션입니다. 프론트엔드(Vue 3.5 + Vite)와 백엔드(Spring Boot REST API)를 하나의 저장소에서 관리하며, Docker Compose 또는 `docker run`(EC2)으로 통합 배포합니다.
 
 소스 패키지명은 `com.hayoon.hangulkid`이며, 백엔드 애플리케이션명은 `hangul-kid`입니다.
 
 ## 2. 기술 스택
 
 ### 프론트엔드 (`front/`)
-- React 18.3 + React DOM 18.3
-- React Router DOM 6.30 (SPA 라우팅)
-- Vite 5.4 + `@vitejs/plugin-react` (빌드/개발 서버)
+- Vue 3.5 (Composition API + `<script setup>`)
+- Vue Router 4 (SPA 라우팅)
+- Vite 5.4 + `@vitejs/plugin-vue` (빌드/개발 서버)
 - 빌드 산출물은 Nginx 1.27(alpine)로 정적 서빙
 - 브라우저 Web Speech API(`SpeechSynthesisUtterance`) 기반 한국어 TTS, `localStorage` 기반 진행 상태 저장
 
@@ -27,10 +27,11 @@
 ## 3. 디렉터리 구조
 ```text
 hayoon/
-  front/                       # React + Vite 프론트엔드
+  front/                       # Vue + Vite 프론트엔드
     src/
-      App.jsx                  # 라우트 정의
-      main.jsx
+      App.vue                  # <router-view/> 래퍼
+      main.js
+      router/index.js          # 라우트 정의 (vue-router)
       api.js                   # 백엔드 API 호출/정규화
       data/letterCatalog.js    # 글자 카탈로그(LETTERS)
       pages/
@@ -68,7 +69,7 @@ hayoon/
 
 ## 4. 주요 기능
 
-### 프론트엔드 라우트 (`front/src/App.jsx`)
+### 프론트엔드 라우트 (`front/src/router/index.js`)
 - `/` → `WelcomePage`
 - `/library` → `LibraryPage`
 - `/letters` → `LettersPage`
@@ -149,7 +150,8 @@ Docker Hub `latest` 이미지를 사용해 `hayoon-net` 네트워크 상에 fron
 - `/home/yangyag/hayoon/.env.example`
 - `/home/yangyag/hayoon/front/vite.config.js`
 - `/home/yangyag/hayoon/front/nginx.conf`
-- `/home/yangyag/hayoon/front/src/App.jsx`
+- `/home/yangyag/hayoon/front/src/App.vue`
+- `/home/yangyag/hayoon/front/src/router/index.js`
 - `/home/yangyag/hayoon/front/src/api.js`
 - `/home/yangyag/hayoon/back/build.gradle`
 - `/home/yangyag/hayoon/back/src/main/resources/application.properties`

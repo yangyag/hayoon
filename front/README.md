@@ -3,7 +3,7 @@
 하윤 한글 학습앱 프론트엔드 모듈입니다. 이 디렉터리는 `hayoon` monorepo의 일부입니다.
 
 ## 기술 스택
-- React 18
+- Vue 3.5 (Composition API + `<script setup>`)
 - Vite 5
 - Nginx (정적 서빙)
 

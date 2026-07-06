@@ -7,7 +7,7 @@
 ```
 /home/yangyag/hayoon
 ├── back/      Spring Boot 백엔드 (Gradle, 루트 프로젝트명: hangul-kid)
-├── front/     React + Vite 프론트엔드 (hayoon-frontend)
+├── front/     Vue + Vite 프론트엔드 (hayoon-frontend)
 ├── docker-compose.yml
 └── .env.example
 ```
@@ -29,9 +29,9 @@
 
 ### 프론트엔드 (`front/`)
 - `front/package.json` 기준
-  - `react` `^18.3.1`, `react-dom` `^18.3.1`
-  - `react-router-dom` `^6.30.1`
-  - 빌드 도구: `vite` `^5.4.19`, `@vitejs/plugin-react` `^4.4.1`
+  - `vue` `^3.5.0`
+  - `vue-router` `^4.4.0`
+  - 빌드 도구: `vite` `^5.4.19`, `@vitejs/plugin-vue` `^5.1.0`
   - `type: module` (ESM)
 - Node.js 및 npm 필요
 
@@ -173,9 +173,9 @@ server: {
 ## 7. 프론트엔드 소스 구성 (참고)
 
 `front/src/`:
-- `main.jsx`, `App.jsx` — 앱 진입점/라우팅
+- `main.js`, `App.vue`, `router/index.js` — 앱 진입점/라우팅
 - `api.js` — 백엔드 API 호출
-- `pages/` — `WelcomePage.jsx`, `LettersPage.jsx`, `LearnPage.jsx`, `LibraryPage.jsx`
+- `pages/` — `WelcomePage.vue`, `LibraryPage.vue`, `LettersPage.vue`, `LearnPage.vue`
 - `data/letterCatalog.js` — 글자 카탈로그 데이터
 - `utils/` — `tts.js`(음성 합성), `shuffle.js`, `progressStorage.js`
 - `styles.css`

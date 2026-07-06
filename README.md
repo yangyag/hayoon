@@ -5,7 +5,7 @@
 ## 디렉터리 구조
 ```text
 hayoon/
-  front/                  # React + Vite
+  front/                  # Vue + Vite
   back/                   # Spring Boot API
   docker-compose.yml      # 통합 실행
   .env.example

@@ -16,7 +16,7 @@
 
 | 컴포넌트 | 기술 | 컨테이너명 | 내부 포트 | 호스트 매핑 포트 |
 | --- | --- | --- | --- | --- |
-| Frontend | React + Vite, Nginx 1.27-alpine 정적 서빙 | `hayoon-front` | `80` | `8081` |
+| Frontend | Vue 3.5 + Vite, Nginx 1.27-alpine 정적 서빙 | `hayoon-front` | `80` | `8081` |
 | Backend | Spring Boot API (Java/Temurin 25) | `hayoon-back` | `8080` | `8080` |
 
 프론트 Nginx가 일부 경로를 백엔드 컨테이너로 리버스 프록시하므로, **두 컨테이너는 반드시 동일한 Docker 네트워크에 있어야** 합니다. 로컬 `docker compose` 실행 시에는 Docker Compose가 자동으로 기본 네트워크를 생성하여 두 컨테이너를 연결합니다. EC2에서 `docker run`으로 직접 실행할 경우에는 `hayoon-net`을 수동으로 생성해야 합니다.

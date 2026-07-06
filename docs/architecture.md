@@ -4,7 +4,7 @@
 
 `hayoon`은 유아용 한글 학습 웹 애플리케이션으로, 단일 git 저장소(monorepo)에 프론트엔드(`front/`)와 백엔드(`back/`)를 함께 두는 구조다. 저장소 루트에는 `front/`, `back/`, `docker-compose.yml`, `README.md`가 있다.
 
-- 프론트엔드: React 18 + React Router + Vite (SPA)
+- 프론트엔드: Vue 3.5 + Vue Router 4 + Vite (SPA, Composition API + `<script setup>`)
 - 백엔드: Spring Boot (REST API + 정적 리소스 서빙)
 - 학습 데이터: 백엔드 코드에 하드코딩된 글자/단어 목록(`LetterService`), 정적 이미지(`static/assets/words/...`), 카드 JSON(`cards/cards.json`)
 
@@ -16,8 +16,8 @@
 
 ### 2.1 구성과 진입점
 
-- 진입점: `front/src/main.jsx` — `BrowserRouter`로 `App`을 감싸 `#root`에 렌더링하고 `styles.css`를 로드한다(`React.StrictMode` 사용).
-- 라우팅: `front/src/App.jsx` — `react-router-dom`의 `Routes`로 페이지를 구성한다.
+- 진입점: `front/src/main.js` — `createApp(App).use(router).mount("#root")`로 마운트하고 `styles.css`를 로드한다.
+- 라우팅: `front/src/router/index.js` — `vue-router`의 `createRouter`(HTML5 history 모드)로 페이지를 구성한다. `App.vue`는 `<div class="app-shell"><router-view/></div>` 래퍼.
 
 | 경로 | 컴포넌트 | 설명 |
 |------|----------|------|
@@ -25,7 +25,7 @@
 | `/library` | `LibraryPage` | 책장 화면, 책 카드 클릭 |
 | `/letters` | `LettersPage` | 글자(가~하) 선택 그리드 |
 | `/learn/:letterKey` | `LearnPage` | 글자별 단어 학습 카드 |
-| `*` | `Navigate to="/"` | 그 외 경로는 `/`로 리다이렉트 |
+| `/:pathMatch(.*)*` | `redirect: "/"` | 그 외 경로는 `/`로 리다이렉트 |
 
 - 빌드/개발: `front/vite.config.js` — 개발 서버 포트 `5173`, `/api` 요청을 `http://localhost:8080`(백엔드)으로 프록시한다. 그 외 루트 파일: `index.html`, `Dockerfile`, `nginx.conf`, `package.json`, `dist/`(빌드 산출물), `docs/`.
 
@@ -33,17 +33,19 @@
 
 ### 2.2 페이지 (`front/src/pages/`)
 
-- `WelcomePage.jsx`: 정적 화면. "시작하기" 클릭 시 `navigate("/library")`.
-- `LibraryPage.jsx`: 정적 화면. 책 카드 클릭 시 `navigate("/letters")`. 상단에 "홈" 버튼(→ `/`).
-- `LettersPage.jsx`: 마운트 시 `getLetters()`(api.js)로 글자 목록을 불러온다. 초기 상태는 `letterCatalog`의 `LETTERS`를 모두 `enabled:false`로 두고, 로드 성공 시 API 결과로 대체한다. 글자 버튼 클릭 시 `enabled`면 `navigate(/learn/{key})`, 아니면 "곧 열려요" 안내(1.4초 후 자동 해제). 로딩/에러 상태 텍스트를 표시한다.
-- `LearnPage.jsx`: 가장 로직이 많은 페이지.
-  - `useParams()`로 `letterKey`를 받고, `findLetterLabel()`로 라벨(예: `ga`→`가`)을 구한다.
-  - 마운트 시 `isTtsSupported()` 확인 후 `saveTtsSupport()`로 설정 저장, 언마운트 시 `stopSpeaking()`.
-  - `letterKey` 변경 시 `readLetterProgress()`로 저장된 진행 상태를 읽고 `saveLastLetterKey()` 호출 후 `getLetterWords(letterKey)`로 단어 목록을 로드한다.
+모두 Vue 3 `<script setup>`(Composition API) 컴포넌트.
+
+- `WelcomePage.vue`: 정적 화면. "시작하기" 클릭 시 `router.push("/library")`.
+- `LibraryPage.vue`: 정적 화면. 책 카드 클릭 시 `router.push("/letters")`. 상단에 "홈" 버튼(→ `/`).
+- `LettersPage.vue`: `onMounted` 시 `getLetters()`(api.js)로 글자 목록을 불러온다. 초기 상태는 `letterCatalog`의 `LETTERS`를 모두 `enabled:false`로 두고, 로드 성공 시 API 결과로 대체한다. 글자 버튼 클릭 시 `enabled`면 `router.push(/learn/{key})`, 아니면 "곧 열려요" 안내(1.4초 후 자동 해제, `noticeTimeoutId`로 타이머 관리, `onUnmounted`에서 `clearTimeout`). 로딩/에러 상태 텍스트를 표시하며, 언마운트 후 상태 갱신 방지용 `active` 플래그 사용.
+- `LearnPage.vue`: 가장 로직이 많은 페이지.
+  - `useRoute().params.letterKey`를 받고, `computed`로 `findLetterLabel()` 라벨(예: `ga`→`가`)을 구한다.
+  - `onMounted` 시 `isTtsSupported()` 확인 후 `saveTtsSupport()`로 설정 저장, `onUnmounted` 시 `stopSpeaking()`.
+  - `watch(letterKey, …, { immediate: true })`로 `letterKey` 변경마다 `readLetterProgress()`로 저장된 진행 상태를 읽고 `saveLastLetterKey()` 호출 후 `getLetterWords(letterKey)`로 단어 목록을 로드한다. 진행 중 로드 무효화는 `loadToken` 토큰 가드로 처리(빠른 `letterKey` 변경/언마운트 시 레이스 방지).
   - 단어 순서는 `shuffle()`로 섞으며(`createShuffledOrder`), 직전 마지막 단어가 첫 카드로 다시 나오지 않도록 조정한다. 한 사이클 소진 시 재셔플(`drawNextWord`).
   - 인트로 카드("오늘의 글자")에서 글자 버튼을 누르면 `speakWord(letterLabel)`로 글자 발음. "다음" 버튼으로 단어 카드로 진입/넘김.
-  - 단어 카드: 이미지(`imageUrl`, 실패 시 "이미지 준비 중" placeholder), 단어 텍스트(첫 글자 강조), "읽어주기" 버튼(`speakWord(word)`), 진행 표시 `seenCount / words.length`.
-  - 진행 상태(`lastWordId`, `seenCount`)는 카드 변경 시 `saveLetterProgress()`로 저장한다.
+  - 단어 카드: 이미지(`imageUrl`, 실패 시 `@error` → "이미지 준비 중" placeholder), 단어 텍스트(첫 글자 `<strong>` 강조), "읽어주기" 버튼(`speakWord(word)`), 진행 표시 `seenCount / words.length`.
+  - 진행 상태(`lastWordId`, `seenCount`)는 `watch`로 카드 변경 시 `saveLetterProgress()`로 저장한다.
 
 ### 2.3 API 계층 (`front/src/api.js`)
 
@@ -143,7 +145,7 @@ JSON 파일 기반의 별도 카드 도메인. (현재 프론트 코드에서 �
 
 ```
 [브라우저 SPA]
- main.jsx → App(Routes) → pages → api.js(fetch)
+ main.js → App.vue(<router-view/>) → router → pages → api.js(fetch)
                                   ↑ utils(tts/shuffle/progressStorage), data(letterCatalog)
         │ HTTP /api/v1/**  (개발 시 Vite 프록시 :5173 → :8080, CORS 허용)
         ▼
