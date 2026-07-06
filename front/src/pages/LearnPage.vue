@@ -59,7 +59,7 @@ const cycle = ref({ ...EMPTY_CYCLE });
 const ttsSupported = ref(false);
 const ttsNotice = ref("");
 
-// letterKey 변경/언마운트 시 진행 중 비동기 로드를 무효화하는 토큰 (React 의 active 플래그와 동등)
+// letterKey 변경/언마운트 시 진행 중 비동기 로드를 무효화하는 토큰 (이전 구현의 active 플래그와 동등)
 let loadToken = 0;
 
 async function loadWords(key) {
